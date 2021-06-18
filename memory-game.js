@@ -9,9 +9,9 @@ const COLORS = [
 ];
 
 const colors = shuffle(COLORS);
-
+var flippedCardCount = 0;
+const FLIPPED_CARDS = [];
 createCards(colors);
-
 
 /** Shuffle array items in-place and return shuffled array. */
 
@@ -40,26 +40,72 @@ function shuffle(items) {
 
 function createCards(colors) {
   const gameBoard = document.getElementById("game");
-
-  for (let color of colors) {
-    // missing code here ...
-  }
+  
+  colors.forEach((color,idx)=>{
+    // for each color
+      // create a div
+      // creat a listener
+      // give them a class of the color looped over
+      let newCard = document.createElement("div");
+      newCard.id = idx;
+      newCard.classList.add(color, "center");
+      newCard.addEventListener("click",handleCardClick);
+      document.getElementById("game").appendChild(newCard);
+  })
 }
 
 /** Flip a card face-up. */
 
 function flipCard(card) {
   // ... you need to write this ...
+  let cardColor = card.classList[0]
+  card.style.backgroundColor = cardColor;
 }
 
 /** Flip a card face-down. */
 
 function unFlipCard(card) {
   // ... you need to write this ...
+  card.style.backgroundColor = "white";
+
 }
 
 /** Handle clicking on a card: this could be first-card or second-card. */
 
 function handleCardClick(evt) {
-  // ... you need to write this ...
+
+  let card = evt.target
+  if(flippedCardCount < 2){
+    flippedCardCount++
+    FLIPPED_CARDS.push(card);
+  }if(flippedCardCount == 2 && FLIPPED_CARDS[0].id === FLIPPED_CARDS[1].id){
+    flippedCardCount--;
+    unFlipCard(FLIPPED_CARDS[1]);
+    FLIPPED_CARDS.pop();
+  }
+
+}
+
+setInterval(main,100);
+
+function main(){
+  FLIPPED_CARDS.forEach(flipCard)
+  if(flippedCardCount == 2){
+    if(FLIPPED_CARDS[0].classList[0] == FLIPPED_CARDS[1].classList[0]){
+      resetFlippedCards();
+      flippedCardCount = 0;
+    }else{
+      setTimeout(()=>{   
+        FLIPPED_CARDS.forEach(unFlipCard);
+        resetFlippedCards();
+        flippedCardCount = 0;
+      },1000)
+    }
+  }
+}
+
+function resetFlippedCards(){
+  while(FLIPPED_CARDS.length > 0){
+    FLIPPED_CARDS.pop();
+  }
 }
